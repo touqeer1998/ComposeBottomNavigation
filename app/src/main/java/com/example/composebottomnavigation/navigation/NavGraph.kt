@@ -20,12 +20,11 @@ fun NavGraph(navController: NavHostController) {
     }
 }
 
-
 fun addHomeScreen(navController: NavHostController, navGraphBuilder: NavGraphBuilder) {
     navGraphBuilder.composable(route = NavRoute.Home.route) {
         HomeScreen(navigateToProfile = { id, showDetails ->
             navController.navigate(
-                NavRoute.Profile.route.plus("/$id/$showDetails")
+                NavRoute.Profile.buildRoute(id, showDetails)
             )
         }, navigateToSettings = {
             navController.navigate(NavRoute.Settings.route)
@@ -36,19 +35,20 @@ fun addHomeScreen(navController: NavHostController, navGraphBuilder: NavGraphBui
 fun addProfileScreen(navController: NavHostController, navGraphBuilder: NavGraphBuilder) {
     navGraphBuilder.composable(
         route = NavRoute.Profile.route.plus("/{id}/{showDetails}"), arguments = listOf(
-            navArgument(name = NavRoute.Profile.id) {
+            navArgument(name = "id") {
                 type = NavType.IntType
             },
-            navArgument(name = NavRoute.Profile.showDetails) {
+            navArgument(name = "showDetails") {
                 type = NavType.BoolType
             },
         )
     ) { navBackStackEntry ->
-        val id = navBackStackEntry.arguments?.getInt(NavRoute.Profile.id).toString().toInt()
+        val id = navBackStackEntry.arguments?.getInt("id").toString().toInt()
         val showDetails =
-            navBackStackEntry.arguments?.getBoolean(NavRoute.Profile.showDetails).toString()
-                .toBoolean()
-        ProfileScreen(id = id, showDetails = showDetails, navigateToSettings = { navController.navigate(NavRoute.Settings.route) })
+            navBackStackEntry.arguments?.getBoolean("showDetails").toString().toBoolean()
+        ProfileScreen(id = id,
+            showDetails = showDetails,
+            navigateToSettings = { navController.navigate(NavRoute.Settings.route) })
     }
 }
 
